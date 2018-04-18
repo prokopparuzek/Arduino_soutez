@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/pi/Downloads/arduino-1.8.5/hardware/arduino/avr/cores/arduino",
+                "/home/pi/Downloads/arduino-1.8.5/hardware/tools/avr/lib/gcc/avr/4.9.2/include",
+                "/home/pi/Downloads/arduino-1.8.5/hardware/tools/avr/avr/include",
+                "/home/pi/Downloads/arduino-1.8.5/hardware/arduino/avr/variants/mega",
+                "/home/pi/Arduino/libraries/Bounce2",
+                "/home/pi/Arduino/libraries/MicroDebug",
+                "/home/pi/Arduino/libraries/arduino-fsm"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "/home/pi/Downloads/arduino-1.8.5/hardware/arduino/avr/cores/arduino",
+                    "/home/pi/Arduino/libraries/",
+                    "${workspceRoot}",
+                    "/home/pi/Arduino/libraries/MicroDebug"
+                ]
+            },
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 3
+}
