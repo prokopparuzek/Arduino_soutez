@@ -9,7 +9,10 @@
                 "/home/pi/Downloads/arduino-1.8.5/hardware/arduino/avr/variants/mega",
                 "/home/pi/Arduino/libraries/Bounce2",
                 "/home/pi/Arduino/libraries/MicroDebug",
-                "/home/pi/Arduino/libraries/arduino-fsm"
+                "/home/pi/Arduino/libraries/arduino-fsm", 
+                "/home/pi/Arduino/libraries/MPU6050_tockn/src",
+                "/home/pi/Arduino/libraries/MPU6050",
+                "/home/pi/Downloads/arduino-1.8.5/hardware/arduino/avr/libraries/Wire/src"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": false,

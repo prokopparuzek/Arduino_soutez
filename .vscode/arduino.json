@@ -1,5 +1,5 @@
 {
-    "sketch": "schranka/schranka.ino",
+    "sketch": "semafor/semafor.ino",
     "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560",
     "port": "/dev/ttyACM0"
