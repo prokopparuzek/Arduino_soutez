@@ -4,8 +4,8 @@
 #define SERIAL_DEBUG false
 #if SERIAL_DEBUG
 #include<HardwareSerial.h>
-#include<SerialDebug.h>
 #endif
+#include<SerialDebug.h>
 enum {RED1 = 22, RED2, YEL1, YEL2, GRE1, GRE2};
 #define BUT1 42
 #define HIT 1
