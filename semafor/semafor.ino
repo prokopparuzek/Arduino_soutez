@@ -1,7 +1,9 @@
 #include<Arduino.h>
 #include<Fsm.h>
 #include<Bounce2.h>
-#define SERIAL_DEBUG false
+#include<MPU6050_tockn.h>
+#include<Wire.h>
+#define SERIAL_DEBUG true
 #if SERIAL_DEBUG
 #include<HardwareSerial.h>
 #endif
@@ -16,6 +18,7 @@ enum {RED1 = 22, RED2, YEL1, YEL2, GRE1, GRE2};
 #define LEFT 2
 #define SWITCH 5
 #define POTSET 40
+#define MPU 6
 
 void green(void);
 void reset(void);
@@ -27,6 +30,12 @@ void f2(void);
 void f4(void);
 void f6(void);
 void f8(void);
+void mpuset(void);
+void mpu30(void);
+void mpu30_45(void);
+void mpu45_60(void);
+void mpu60_90(void);
+void mpu90more(void);
 
 
 Bounce debouncer1 = Bounce();
@@ -37,8 +46,11 @@ State state_green(&reset,&green,NULL);
 State state_walker(NULL,&walker,NULL);
 State state_switch(NULL,&set,NULL);
 State state_potenciometr(NULL,&potenciometr,NULL);
+State state_mpuSet(NULL,&mpuset,NULL);
 
 Fsm fsm(&state_switch);
+
+MPU6050 gyro(Wire);
 
 void setup() {
 int i;
@@ -60,7 +72,12 @@ fsm.add_transition(&state_switch,&state_green,LEFT,NULL);
 fsm.add_transition(&state_green,&state_switch,SWITCH,NULL);
 fsm.add_transition(&state_switch,&state_potenciometr,POTSET,NULL);
 fsm.add_transition(&state_potenciometr,&state_switch,SWITCH,NULL);
+fsm.add_transition(&state_switch,&state_mpuSet,MPU,NULL);
+fsm.add_transition(&state_mpuSet,&state_switch,SWITCH,NULL);
 SERIAL_DEBUG_SETUP(9600);
+Wire.begin();
+gyro.begin();
+gyro.calcGyroOffsets(true);
 }
 
 void loop() {
@@ -121,6 +138,9 @@ if (spin1 && spin2) {
 else if (!spin1 && spin2) {
     fsm.trigger(POTSET);
 }
+else if(spin1 && !spin2) {
+    fsm.trigger(MPU);
+}
 }
 
 void potenciometr() {
@@ -178,4 +198,12 @@ if (TIME(lastTime,2000)) {
     digitalWrite(YEL1,!digitalRead(YEL1));
     lastTime = millis();
 }
+}
+
+void mpuset() {
+int angle;
+gyro.update();
+//angle = gyro.getAngleX();
+DEBUG("mpuset",gyro.getAccAngleX());
+fsm.trigger(SWITCH);
 }
