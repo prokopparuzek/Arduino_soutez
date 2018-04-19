@@ -21,9 +21,12 @@ void green(void);
 void reset(void);
 void walker(void);
 void set(void);
+void potenciometr(void);
 void fless2(void);
 void f2(void);
-void potenciometr(void);
+void f4(void);
+void f6(void);
+void f8(void);
 
 
 Bounce debouncer1 = Bounce();
