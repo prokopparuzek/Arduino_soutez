@@ -1,7 +1,7 @@
 #include<Arduino.h>
 #include<Fsm.h>
 #include<Bounce2.h>
-#define SERIAL_DEBUG true
+#define SERIAL_DEBUG false
 #if SERIAL_DEBUG
 #include<HardwareSerial.h>
 #include<SerialDebug.h>
