@@ -7,8 +7,10 @@
 #endif
 #include<SerialDebug.h>
  #define TIME(last,interval) (millis() - (last)) > (interval) // makro na zjisteni doby behu
+ #define LED(state) digitalWrite(RED1,(state));digitalWrite(YEL1,(state));digitalWrite(GRE1,state)
 enum {RED1 = 22, RED2, YEL1, YEL2, GRE1, GRE2};
 #define BUT1 42
+#define BUT2 43
 #define POT A0
 #define SPIN1 52
 #define SPIN2 53
@@ -16,6 +18,7 @@ enum {RED1 = 22, RED2, YEL1, YEL2, GRE1, GRE2};
 #define LEFT 2
 #define SWITCH 5
 #define POTSET 40
+#define LEDSET 15
 
 void green(void);
 void reset(void);
@@ -27,16 +30,19 @@ void f2(void);
 void f4(void);
 void f6(void);
 void f8(void);
+void led(void);
 
 
 Bounce debouncer1 = Bounce();
 Bounce debouncer2 = Bounce();
 Bounce debouncer3 = Bounce();
+Bounce debouncer4 = Bounce();
 
 State state_green(&reset,&green,NULL);
 State state_walker(NULL,&walker,NULL);
 State state_switch(NULL,&set,NULL);
 State state_potenciometr(NULL,&potenciometr,NULL);
+State state_led(NULL,&led,NULL);
 
 Fsm fsm(&state_switch);
 
@@ -46,13 +52,16 @@ for(i = 22; i <= 27; i++)
     pinMode(i, OUTPUT);
 pinMode(BUT1,INPUT_PULLUP);
 debouncer1.attach(BUT1);
-debouncer1.interval(5);
-pinMode(SPIN1,INPUT_PULLUP);
-debouncer2.attach(SPIN1);
+debouncer1.interval(10);
+pinMode(BUT2,INPUT_PULLUP);
+debouncer2.attach(BUT2);
 debouncer2.interval(10);
-pinMode(SPIN2,INPUT_PULLUP);
-debouncer3.attach(SPIN2);
+pinMode(SPIN1,INPUT_PULLUP);
+debouncer3.attach(SPIN1);
 debouncer3.interval(10);
+pinMode(SPIN2,INPUT_PULLUP);
+debouncer4.attach(SPIN2);
+debouncer4.interval(10);
 pinMode(POT,INPUT);
 fsm.add_transition(&state_green,&state_walker,HIT,NULL);
 fsm.add_transition(&state_walker,&state_green,LEFT,NULL);
@@ -60,6 +69,8 @@ fsm.add_transition(&state_switch,&state_green,LEFT,NULL);
 fsm.add_transition(&state_green,&state_switch,SWITCH,NULL);
 fsm.add_transition(&state_switch,&state_potenciometr,POTSET,NULL);
 fsm.add_transition(&state_potenciometr,&state_switch,SWITCH,NULL);
+fsm.add_transition(&state_switch,&state_led,LEDSET,NULL);
+fsm.add_transition(&state_led,&state_switch,SWITCH,NULL);
 SERIAL_DEBUG_SETUP(9600);
 }
 
@@ -110,16 +121,19 @@ fsm.trigger(LEFT);
 
 void set() {
 int spin1, spin2;
-debouncer2.update();
 debouncer3.update();
-//DEBUG("switch", debouncer2.read(),debouncer3.read());
-spin1 = !debouncer2.read();
-spin2 = !debouncer3.read();
+debouncer4.update();
+//DEBUG("switch", debouncer3.read(),debouncer4.read());
+spin1 = !debouncer3.read();
+spin2 = !debouncer4.read();
 if (spin1 && spin2) {
     fsm.trigger(LEFT);
 }
 else if (!spin1 && spin2) {
     fsm.trigger(POTSET);
+}
+else if (!spin1 && !spin2) {
+    fsm.trigger(LEDSET);
 }
 }
 
@@ -178,4 +192,27 @@ if (TIME(lastTime,2000)) {
     digitalWrite(YEL1,!digitalRead(YEL1));
     lastTime = millis();
 }
+}
+
+void led() {
+static unsigned long lastTime = 0;
+static short speed = 10;
+short pause;
+pause = (10 - speed + 1) * 1000;
+//DEBUG("speed",debouncer1.read(),debouncer2.read(),speed);
+if (TIME(lastTime,pause)) {
+    LED(!digitalRead(GRE1));
+    lastTime = millis();
+}
+debouncer1.update();
+debouncer2.update();
+if (debouncer1.fell() && speed < 10) {
+    DEBUG("+");
+    speed++;
+}
+else if (debouncer2.fell() && speed > 1 ) {
+    DEBUG("-");
+    speed--;
+}
+fsm.trigger(SWITCH);
 }
