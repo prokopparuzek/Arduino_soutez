@@ -58,7 +58,7 @@ void reset() {
 
 void walker() {
 DEBUG("walker");
-delay(1000);
+delay(10000);
 digitalWrite(GRE1,LOW);
 digitalWrite(YEL1,HIGH);
 delay(1000);
