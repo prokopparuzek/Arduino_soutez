@@ -124,7 +124,7 @@ void potenciometr() {
 int value;
 value = analogRead(POT);
 DEBUG("potenciometr",value);
-if (value > 0) fless2();
+if (value >= 0) fless2();
 if (value > 205) f2();
 if (value > 410) f4();
 if (value > 614) f6();
